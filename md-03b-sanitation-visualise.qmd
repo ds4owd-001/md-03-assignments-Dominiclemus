@@ -1,7 +1,7 @@
 ---
 title: "Data transformation with dplyr"
 subtitle: "And make a plot"
-author: ""
+author: "Bagumaho Dominic"
 format:
   html:
     embed-resources: true
@@ -43,11 +43,17 @@ sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
 ## Task 1
 
 1.  Run all code chunks above.
+
 2.  Use the `glimpse()` function to get an overview of the data set.
+
 3.  How many variables are in the data set?
 
-```{r}
+    ## Answer (By Dominic)
 
+    There are 8 variables (Represented by the number of columns)
+
+```{r}
+glimpse(sanitation)
 ```
 
 ## Task 2
@@ -55,7 +61,8 @@ sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
 1.  Use the `count()` function with varname_short and varname_long to identify the definitions of the levels in these two variables.
 
 ```{r}
-
+sanitation |> 
+  count(varname_short, varname_long)
 ```
 
 ## Task 3
@@ -69,7 +76,10 @@ sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
 2.  Store the result as a new object in your environment with a name of your choice.
 
 ```{r}
-
+sanitation_uganda_sm_2000_2020 <- sanitation |> 
+  filter(iso3 == "UGA",
+         year == 2000 | year == 2020,
+         varname_short != "san_sm")
 ```
 
 ## Task 4
@@ -77,7 +87,8 @@ sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
 1.  Use the `count()` function with the data you created in Task 3 to verify that year 2000 and 2020 remained in the year variable.
 
 ```{r}
-
+sanitation_uganda_sm_2000_2020 |> 
+  count(year)
 ```
 
 ## Task 5
@@ -100,7 +111,17 @@ geom_text(aes(label = round(percent, 1)),
 ```
 
 ```{r}
-
+  ggplot(data = sanitation_uganda_sm_2000_2020,
+         mapping = aes(x = residence,
+                       y = percent,
+                       fill = varname_long)) +
+    geom_col() +
+    facet_wrap(~year) +
+    scale_fill_colorblind() +
+    geom_text(aes(label = round(percent, 1)), 
+          position = position_stack(vjust = 0.5),
+          size = 3,
+          color = "white")
 ```
 
 ## Task 6
@@ -108,13 +129,34 @@ geom_text(aes(label = round(percent, 1)),
 If you haven't worked with JMP indicators before, the following questions will be challenging to answer.
 
 1.  Look at the plot that you created. What do you notice about the order of the bars / order of the legend?
+
+    ## Answer (By Dominic)
+
+    The bars are supposed to be arranged starting from the poor sanitation facilities to the basic ones ( which are partially improved). This implies that the "no sanitation facilities" was supoosed to be at the bottom of the bar
+
 2.  What would you want to change?
+
+    I would want to change the arrangement of the data so that the "no sanitation facilities" part comes at the bottom of the bars. Also, i would want to participate in changing of all those data sizes so that we increase the size of the "basic sanitation services" and probably the "safely managed sanitation services"
+
 3.  Why did we remove "safely managed sanitation services" from the data set in Task 3?
+
+    "Safely managed sanitation services" pose no health risk thus the most critical areas that require working on are the ones we remained with.
 
 ## Task 7
 
 1.  Run the code in the code chunk below.
+
 2.  What do you observe when you look at the code and plot?
+
+    ## Answer (By Dominic)
+
+    The grids represent different plots for each combination of "varname_short" and "residence"
+
+    The code provided creates a histogram using ggplot. It filters the data set "sanitation" to include only the data for the year 2020 and then creates a new object "sanitation_2020". A histogram is created based on the filtered data.
+
+    A faceted grid is then created from the histogram for each combination of "varname_short" and "residence". The scales on the y-axes of the created plots are allowed to vary
+
+3.  
 
 ```{r}
 
